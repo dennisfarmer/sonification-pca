@@ -112,7 +112,7 @@ def compute_audio_embedding(audio_path: str):
     MUSICNN_SR = 16000
     try:
         audio = es.MonoLoader(filename=audio_path, sampleRate=MUSICNN_SR)()
-        musicnn_emb = es.TensorflowPredictMusiCNN(graphFilename='./musicnn/msd-musicnn-1.pb', output='model/dense_1/BiasAdd')(audio)
+        musicnn_emb = es.TensorflowPredictMusiCNN(graphFilename='./musicnn_feature_extractor/msd-musicnn-1.pb', output='model/dense_1/BiasAdd')(audio)
         mean_emb = np.mean(musicnn_emb, axis=0)
         mean_emb = mean_emb[np.newaxis, :]
     except:

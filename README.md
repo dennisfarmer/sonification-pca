@@ -7,6 +7,8 @@ Dennis Farmer
 - Run in terminal: `python ./web_interface.py` (after setup)
 - Then, visit `http://127.0.0.1:8050/` in your web browser.
 
+![web_interface.png](web_interface.png)
+
 ## Setup
 ```sh
 # python --version: 3.12.12
