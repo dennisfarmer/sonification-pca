@@ -282,7 +282,7 @@ env.set(
 <<< "-----------------------------" >>>;
 
 
-<<< "\nPrincipal Component 3\n many notes ----->  few notes\n\n" >>>;
+<<< "\nPrincipal Component 3\n (-) few notes ----->  many notes (+) \n\n" >>>;
 // --------------------
 // max degree mapping
 // --------------------
@@ -295,9 +295,9 @@ env.set(
     tag_to_value("country") +
     tag_to_value("oldies")
 ) / 4 => val;
-map_idx(val, 7) => int max_degree;
+map_idx(invert(val), 7) => int max_degree;
 
-<<< "Max Degree parameter: (jass+soul+country+oldies) / 4 =", val >>>;
+<<< "Max Degree parameter: (4-(jass+soul+country+oldies)) / 4 =", val >>>;
 <<< "(between 0-7)" >>>;
 <<< "low is one note, high is many notes" >>>;
 <<< "Max degree", max_degree >>>;

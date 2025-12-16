@@ -26,9 +26,49 @@ python ./web_interface.py
 
 ## Explaination of Sonification
 
-See `sonification.ck` for implementation
-
 ![diagram.png](diagram.png)
+
+The core idea behind this project is that when dimensionality reduction is performed using Principal Component Analysis, each of the principal components has some correlation with the original features. As you move along one of the dimensions in the reduced space, that movement corresponds to some linear combination of the original features. This can then be mapped to some sound that represents the change in the original features, creating a unique sonification for each song in a massive dataset of songs. The sonification provides an intuition for what each of the principal components actually represents in the original data.
+
+In this case, the "original data" is in the form of of a collection of musical features extracted from a large mp3 dataset using a pretrained feature extractor (musicnn). This model computes spectrograms from the audio files, and feeds them through a convolutional neural network, resulting in a vector with 50 dimensions, each representing some music audio tag, such as "guitar", "classical", "slow", "techno", and so on. We treat this as an embedding in a 50 dimensional space, where similar songs are close in proximity to each other in this space. We can then make content-based music recommendations using this; if you listen to a playlist of tracks that forms a cluster in this space, we can recommend to you tracks that are nearby the centroid of your playlist, based on converting each track to a vector using our musicnn feature extractor.
+
+However, it is difficult to visualize 50 dimensions. What if we could instead (attempt to) perform sonification of 50 dimensions?
+
+The principal components (three in this case) are constructed such that they capture the most amount of variation in the original features (50 in this case). The principal components are the eigenvectors of the covariance matrix of the data, and they point in the directions of maximum variance in the data, ordered by descending order of amount of variance explained (PC1, PC2, PC3).
+
+A concept called the "correlation loadings" matrix captures the interpretation of how the principal components relate to the original data, in the form of correlations between the original variables and each of the three principal components. This can be computed in Python to retrieve how each PC correlates with each of the 50 feature tags that MusiCNN gives us.
+
+This gives us a way to map a coordinate in PC space to its relative connection to the original features, by multiplying the PC coordinate by our correlation loadings matrix (along with some scaling and normalizing, see `dimensionality_reduction.py:compute_pc_mapping()` code below). This way, we recover an approximation of the original 50 features from a PC point. Note: since we have reduced the dimensionality (50->3) and then reconverted back to the original feature space using the correlations (3->50), we have lost a slight bit of information / accuracy, but this maintains the purpose of sonifying the principal components, not sonifying the large-dimensional data directly.
+
+Now that we have a way to relate the PCs to the original features. From here, we can perform an eyeball check to each of the sorted columns of the correlation loadings matrix. 
+
+- Principal Component 1:
+       - positively correlated with various rock and metal tags
+       - negatively correlated with rnb and electronic tags
+- Principal Component 2:
+       - positively correlated with sad, ambient, and mellow tags
+       - negatively correlated with party and catchy, tags
+- Principal Component 3:
+       - positively correlated with experimental and indie tags
+       - negatively correlated with soul, country, and easy listening tags
+
+We can then normalize each tag to be between 0.0 and 1.0, and take weighted averages of tag values (upscaled from PC coordinates) to define sonification parameter mappings.
+
+- Principal Component 1:
+       - positive: high filter cutoff, more gain on random notes to sound digital
+       - negative: low filter cutoff to sound more like popular / rock music, minimal random notes
+- Principal Component 2:
+       - positive: slow tempo, sad modes like Locrian, Phrygian, Aeolian, ...
+       - negative: fast tempo, happy modes like Lydian, Ionian, Mixolydian, ...
+- Principal Component 3:
+       - positive: many notes, using most or all of the scale degrees chosen by PC2
+       - positive: fewer notes to sound simpler, less experimental
+
+
+See `sonification.ck` for implementation of selecting which feature tags are used for which parameters; it is mostly a trial-based process of seeing which parameters are useful to map to specific tags that correlate with specific principal components to craft an interpretable story, but I think I landed on a parameter mapping that makes a bit of sense.
+
+
+
 
 ```py
 # dimensionality_reduction.py
@@ -61,6 +101,16 @@ corr_loadings = eigenvectors.T * np.sqrt(eigenvalues)
 param_mapped = X_reduced.dot(corr_loadings_matrix.T)
 param_map_scaler = MinMaxScaler((0, 1))
 param_map_scaler.fit(param_mapped)
+
+# ==============================
+# to convert [pc1, pc2, pc3] to approximation of original 50 features:
+# ==============================
+def pc_mapping(pc1, pc2, pc3): 
+       return param_map_scaler.transform(
+              np.array([pc1, pc2, pc3]).reshape(1,3).dot(corr_loadings_matrix.T)
+              )[0]
+
+
 scaled_param_mapped = param_map_scaler.transform(param_mapped)
 scaled_map_df = pd.DataFrame(scaled_param_mapped, columns=embedding_tags)
 print(scaled_map_df.head())
