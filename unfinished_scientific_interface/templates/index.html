@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+    <div style="border: 2px solid black; padding: 10px; margin-left: 10px; margin-right: 10px">
+        <form action="/csvfile/" method="post" enctype="multipart/form-data">
+            <label for="csvfile">Upload CSV File:</label>
+            <input type="file" name="csvfile" id="csvfile" accept=".csv" required>
+            <select name="hidden_select" id="hidden_select" style="display:none;">
+                <option value="placeholder"></option>
+            </select>
+            <br>
+            <input type="submit" value="Submit CSV file"/>
+        </form>
+    </div>
+{% endblock %}

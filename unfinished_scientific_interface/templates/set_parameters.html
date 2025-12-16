@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+    <div style="border: 2px solid black; padding: 10px; margin-left: 10px; margin-right: 10px">
+        <form action="/render_sonification/" method="post">
+            <label for="mode">Mode:</label>
+            <select name="mode" id="mode">
+                <option value="Micro Tonal">Micro Tonal</option>
+                <option value="Whole Tone">Whole Tone</option>
+                <option value="Lydian">Lydian (brightest)</option>
+                <option value="Ionian">Ionian</option>
+                <option value="Mixolydian">Mixolydian</option>
+                <option value="Dorian">Dorian</option>
+                <option value="Aeolian">Aeolian</option>
+                <option value="Phrygian">Phrygian</option>
+                <option value="Locrian">Locrian (darkest)</option>
+            </select>
+            <label for="key_sig">Key Signature:</label>
+            <select name="key_sig" id="key_sig">
+                <option value="C">C</option>
+                <option value="Db">Db</option>
+                <option value="D">D</option>
+                <option value="Eb">Eb</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+                <option value="Gb">Gb</option>
+                <option value="G">G</option>
+                <option value="Ab">Ab</option>
+                <option value="A">A</option>
+                <option value="Bb">Bb</option>
+                <option value="B">B</option>
+            </select>
+            <label for="timestep">Timestep:</label>
+            <select name="timestep" id="timestep">
+                <option value="day">Day</option>
+                <option value="month">Month</option>
+                <option value="year">Year</option>
+            </select>
+            <label for="major_dates">Major Dates (comma delimited):</label>
+            <input type="text" name="major_dates" id="major_dates">
+            <input type="hidden" name="basename" value="{{ basename }}">
+            <br>
+            <label for="start_date">Start Date:</label>
+            <input type="date" name="start_date" id="start_date" required>
+            <br>
+            <label for="visualize_y">Y axis variable:</label>
+            <select name="visualize_y" id="visualize_y">
+                {% for col in column_names %}
+                <option value="{{ col }}">{{ col }}</option>
+                {% endfor %}
+            </select>
+            <br>
+            <input type="submit" value="Submit parameter mapping and render"/>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,4 @@
+__pycache__
+.env/
+course_content/
+data/tracks_features.csv
