@@ -28,6 +28,10 @@ python ./web_interface.py
 
 ![diagram.png](diagram.png)
 
+Sonification of Principal Component Analysis - for the enhanced interpretability of a content-based music recommender system
+
+https://github.com/dennisfarmer/sonification-pca/tree/main
+
 The core idea behind this project is that when dimensionality reduction is performed using Principal Component Analysis, each of the principal components has some correlation with the original features. As you move along one of the dimensions in the reduced space, that movement corresponds to some linear combination of the original features. This can then be mapped to some sound that represents the change in the original features, creating a unique sonification for each song in a massive dataset of songs. The sonification provides an intuition for what each of the principal components actually represents in the original data.
 
 In this case, the "original data" is in the form of of a collection of musical features extracted from a large mp3 dataset using a pretrained feature extractor (musicnn). This model computes spectrograms from the audio files, and feeds them through a convolutional neural network, resulting in a vector with 50 dimensions, each representing some music audio tag, such as "guitar", "classical", "slow", "techno", and so on. We treat this as an embedding in a 50 dimensional space, where similar songs are close in proximity to each other in this space. We can then make content-based music recommendations using this; if you listen to a playlist of tracks that forms a cluster in this space, we can recommend to you tracks that are nearby the centroid of your playlist, based on converting each track to a vector using our musicnn feature extractor.
