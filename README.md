@@ -67,7 +67,9 @@ We can then normalize each tag to be between 0.0 and 1.0, and take weighted aver
 
 See `sonification.ck` for implementation of selecting which feature tags are used for which parameters; it is mostly a trial-based process of seeing which parameters are useful to map to specific tags that correlate with specific principal components to craft an interpretable story, but I think I landed on a parameter mapping that makes a bit of sense.
 
+Note that not all 50 original features are used in the sonification, and in most cases an average of tag values are used to perform a parameter mapping. Since all the complicated math utilized in this project strongly places this sonification in the "model-based" category, it is less likely that we will have a solid grounded motivation to be precise about which tags match to which parameters, since for instance it is hard to tell the exact difference be4tween "electronic", "electronica", and "electro". In addition, enumerating over all 50 original features and finding a specific parameter to map them to would result in an overly complex sonification result, which would muddy the interpretability of it and result in a random noise generator.
 
+Selecting the feature tags based on their correlations with the principal components allows the crafting of a story based on statistical rigor, while also allowing room for some creativity and musification of the interpretation of the data.
 
 
 ```py
